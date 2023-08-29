@@ -1,12 +1,12 @@
-#Plotting Manhattan plot, Dot Plot, and Violin Plot for FPKM values for four stages, namely mouseESCs, Lepto/Zygotene, Pachytene, and Diplotene
+#Plotting Manhattan plot, Dot Plot, Empirical cumulative density function (ECDF) plot, and Violin Plot for FPKM values for
+#four stages, namely mouseESCs (derived from Adelman et al. 2015), Lepto/Zygotene, Pachytene, and Diplotene
 #Lastly plotting Gene density plot for all four stages.
 
 setwd("/workdir/jl3285/GRO-seq_mESCs/ManhattanPlot_all")
-#install.packages("readxl")
+#Sys.setenv(https_proxy="http://cbsulsrv13.biohpc.cornell.edu:3128")
 library(dplyr)
 library(readxl)
 library(ggplot2) 
-#Sys.setenv(https_proxy="http://cbsulsrv13.biohpc.cornell.edu:3128")
 library(ggpubr)
 library(dplyr)
 library(tidyverse)
@@ -25,8 +25,6 @@ upload_excel <- function(file_path) {
 }
 
 Merge_Replicates <- function(rep1,rep2) {
-  #duplicated <- D_R1[duplicated(D_R1[,c("chrom", "start", "end", "accession")]),] #zero
-  #df <-anti_join( D_R1, D_R2, by = c("chrom", "start", "end")) #zero
   df <- merge(rep1, rep2, by = c("chrom", "start", "end", "accession"))
   df$FPKM <- rowMeans(df[,5:6]) #calculating the average
   df <- df[,c(1,2,3,4,7)]
@@ -73,7 +71,6 @@ myManhattan <- function(df, graph.title = "",
     }
   }
   y.max <- floor(max((df$P))) + 1
-  
   if (y.max %% y.step != 0){ #checking the remainder
     y.diff <- floor(y.max/10)
     y.max <- y.diff*10 + 10 #since the y.step is 2
@@ -143,9 +140,7 @@ mESC <- myManhattan(M, graph.title="Mouse Embryonic Stem cell")
 ########################## Spermatogenic stem cell data (Leptotene/Zygotene, Pachytene, Diplotene) from PRO-seq data (Alexander et al. 2023) ####################################################
 
 Merge_Replicates <- function(rep1,rep2,rep3,rep4) {
-  #duplicated <- D_R1[duplicated(D_R1[,c("chrom", "start", "end", "accession")]),] #zero
-  #df <-anti_join( D_R1, D_R2, by = c("chrom", "start", "end")) #zero
-  
+
   df <- merge(merge(merge(rep1, rep2, by = c("chrom", "start", "end", "accession"), all = TRUE), rep3, by = c("chrom", "start", "end", "accession"), all = TRUE), rep4, by = c("chrom", "start", "end", "accession"), all = TRUE)
   df$FPKM <- rowMeans(df[, 5:8]) #calculating the average
   df <- df[,c(1,2,3,4,9)]
@@ -211,13 +206,10 @@ myManhattan <- function(df, graph.title = "",
                        "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", 
                        "chrX", "chrY")
   
-  #D$chrom <- sub("chr", "", D$CHR)
-  #D$chrom <- factor(D$chrom, levels = unique(D$chrom),labels=c('1', '2', '3', '4', '5', '6', '7', '8', '9','10','11', '12', '13', '14', '15', '16', '17', '18', '19','X','Y'))
-  
+ 
   df$CHR <- factor(df$CHR, levels = chromosome_order)
   df <- df[order(df$CHR), ]
-  #All_Density <- All_Density[order(All_Density$M_Frequency, decreasing = TRUE), ]
-  #chrom <- sub("chr", "", All_Density$CHR)
+  
   df$CHR <- factor(df$CHR,  labels=c('1', '2', '3', '4', '5', '6', '7', '8', '9','10','11', '12', '13', '14', '15', '16', '17', '18', '19','X','Y'))
   
   g <- ggplot(df) +
@@ -242,9 +234,7 @@ myManhattan <- function(df, graph.title = "",
           axis.text = element_text(size = font.size),
           strip.text.x = element_text(size = font.size))+
     labs(title = graph.title, x = "Chromosome", y = y.title) 
-    #geom_hline(yintercept = autosome_mean, linetype = "dashed", color = "black") #AUTOSOMAL MEAN +
-    #geom_hline(yintercept = X_mean, linetype = "dashed", color = "red") #X mean
-  
+   
   return(g)
 }
 
