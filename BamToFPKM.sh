@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#Converting the bam files from leChRO-seq to FPKM values for three spermatocytes stages: Lepto/Zygotene, Pachytene and Zygotene.
 #Refgenome used: mm10
 #To convert gtf to B12 format that is need for FPKM calculation downstream
 
