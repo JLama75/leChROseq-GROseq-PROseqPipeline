@@ -153,7 +153,7 @@ echo activating RSeQC ... #FPKM_count.py code is in RSeQC package
 export PYTHONPATH=/programs/RSeQC-5.0.1/lib64/python3.9/site-packages:/programs/RSeQC-5.0.1/lib/python3.9/site-packages
 export PATH=/programs/RSeQC-5.0.1/bin:$PATH
 
-FPKM_count.py -i ${NAMES}.sorted.filtered.bam  -r Ref_bodies.bed –d ‘1++,1–-,2+-,2-+’ -o ${NAMES}
+FPKM_count.py -i ${NAMES}.sorted.filtered.bam  -r Ref_bodies.bed –d -o ${NAMES}
 #This will give you the Excel file with gene bodies and their FPKM values. 
 
 #IF YOU DON'T KNOW THE STRANDED NESS RUN 
