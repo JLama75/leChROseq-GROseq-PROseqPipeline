@@ -11,4 +11,4 @@ bodies <- refGene
 bodies$V2[bodies$V6 == "+"] <- bodies$V2[bodies$V6 == "+"]+250
 bodies$V3[bodies$V6 == "-"] <- bodies$V3[bodies$V6 == "-"]-250
 bodies <-unique(bodies)
-write.table(bodies, "Ref_bodies.bed", row.names=FALSE, quote=FALSE)
+write.table(bodies, "Ref_bodies.bed", row.names=FALSE, col.names=FALSE, quote=FALSE)
