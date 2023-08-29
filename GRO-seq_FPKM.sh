@@ -1,6 +1,7 @@
 
 #!/usr/bin/env bash
-#GRO-seq data from adelman et al. 2015
+#GRO-seq data from Adelman's lab (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4402150/) Williams et al. 2015
+#The mouse Embryonic Stem Cells (mESCs) are derived from the female embryo.
 # Declare the array #list alternative in bash
 
 declare -a accessions=(
