@@ -1,2 +1,2 @@
 # ManhattanPlot_leChROseq
-Creating manhattan plot using FPKM from leChRO-seq data
+Analyzing leChRO-seq, GRO-seq, and PRO-seq data sets to obtain and compare their expressions (FPKM) and visualize through Manhattan Plots
