@@ -3,7 +3,6 @@
 #Reference genome used- mm10
 
 setwd("/local/workdir/jl3285/ChRO_seq/mm10geneAnnotation/FPKM")
-#install.packages("readxl")
 library(dplyr)
 library(readxl)
 
@@ -11,6 +10,7 @@ Ref_bodies <- read.table("Ref_bodies.bed") #Bed file containing the read counts 
 Ref_bodies <- Ref_bodies[,c(1,2,3)] 
 colnames(Ref_bodies)<- c("chrom","start", "end")
 
+#uploading the excel file containing the FPKM values for each genebodies for all three stages
 upload_excel <- function(file_path) {
   
   data <- read.table(file_path, header = FALSE, col.names = c("chrom","start", "end",	"accession",	"mRNA_size",	"gene_strand",	"Frag_count",	"FPM",	"FPKM"))
@@ -19,22 +19,19 @@ upload_excel <- function(file_path) {
   return(data)
 }
 
-
+#Merging the technical replicates
 Merge_Replicates <- function(rep1,rep2,rep3,rep4) {
   #duplicated <- D_R1[duplicated(D_R1[,c("chrom", "start", "end", "accession")]),] #zero
   #df <-anti_join( D_R1, D_R2, by = c("chrom", "start", "end")) #zero
-  
   df <- merge(merge(merge(rep1, rep2, by = c("chrom", "start", "end", "accession"), all = TRUE), rep3, by = c("chrom", "start", "end", "accession"), all = TRUE), rep4, by = c("chrom", "start", "end", "accession"), all = TRUE)
   df$FPKM <- rowMeans(df[, 5:8]) #calculating the average
   df <- df[,c(1,2,3,4,9)]
-  
   return(df)
 }
 
+#Normalizing the data. Multiplying the FPKM values with the normalization factor obtained from radioactive run-on assay
 Plot_PrepareData <- function(data, filename) {
-  
-data$BP <- (data$end + data$start)/2 #midpoint of gene 
-
+data$BP <- (data$end + data$start)/2 #I'll be taking midpoint of gene to graph out the positions in Manhattan plot 
 if (filename == "P") {
   data$FPKM <- data$FPKM * 2.7153 # Normalization: multiplying by radioactive run-on scale factor
 } else if (filename == "D") {
@@ -42,7 +39,7 @@ if (filename == "P") {
 } else if (filename == "LZ") {
   data$FPKM <- data$FPKM * 1
 }
-
+  
 data <- data[,c(4,1,6,5)]
 colnames(data) <- c("SNP", "CHR", "BP", "P") #P=FPKM, BP=midpoint position, CHR=chromosome, SNP=geneName
 data <- data %>%filter(CHR != "chrM")
@@ -58,6 +55,7 @@ data <- data[order(data$Number, data$BP), ] #order via chromosome Number and the
 return(data)
 }
 
+#Function to plot Manhattan with position in x-axis and FPKM in y-axis
 myManhattan <- function(df, graph.title = "", 
                         col = c("lightblue", "navy"), even.facet = TRUE, 
                         font.size = 12, axis.size = 0.5, significance = NULL, report = FALSE,
@@ -114,13 +112,13 @@ myManhattan <- function(df, graph.title = "",
   return(g)
 }
 
-stage_list <- c("ChRO_D", "ChRO_P", "ChRO_LZ")
+ #Calling the above functions
 
+stage_list <- c("ChRO_D", "ChRO_P", "ChRO_LZ")
 for(stage in stage_list) {
   print(stage)
   #stage="ChRO_D"
   pattern2=".FPKM.FPKM.xls"
-  
   for(i in 1:4) { 
     object_name <- paste0(paste(stage, "R", sep = "_"), i)
     values <- paste0(paste(stage, "R", sep = "_"), i, pattern2) #ChRO_D_R1.FPKM.FPKM.xls
@@ -128,7 +126,6 @@ for(stage in stage_list) {
     assign(object_name, upload_excel(values))  #calls the function upload_excel() to upload the files 
   }
 }
-
 
 D <- Merge_Replicates(ChRO_D_R1,ChRO_D_R2,ChRO_D_R3,ChRO_D_R4)
 P <- Merge_Replicates(ChRO_P_R1,ChRO_P_R2,ChRO_P_R3,ChRO_P_R4)
@@ -154,18 +151,10 @@ ggsave(output_file, width = 9, height = 4, dpi = 300)
 
 dev.off()
 myManhattan(P, graph.title="Pachytene", y.step = 50)
-# Specify the file path and name for the PDF output
 output_file <- "Manhattan_Pachytenee_FPKM.pdf"
-# Save the plot to PDF using ggsave
 ggsave(output_file, width = 9, height = 4, dpi = 300)
 
 dev.off()
 myManhattan(LZ,  graph.title="Lepto/Zygotene")
-# Specify the file path and name for the PDF output
 output_file <- "Manhattan_LeptoZygotene_FPKM.pdf"
-
-# Save the plot to PDF using ggsave
 ggsave(output_file, width = 9, height = 4, dpi = 300)
-
-#final plot dimension: 
-#plot dimention: 12.74X4.08 for R1
