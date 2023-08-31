@@ -31,28 +31,26 @@ Merge_Replicates <- function(rep1,rep2,rep3,rep4) {
 
 #Normalizing the data. Multiplying the FPKM values with the normalization factor obtained from radioactive run-on assay
 Plot_PrepareData <- function(data, filename) {
-data$BP <- (data$end + data$start)/2 #I'll be taking midpoint of gene to graph out the positions in Manhattan plot 
-if (filename == "P") {
-  data$FPKM <- data$FPKM * 2.7153 # Normalization: multiplying by radioactive run-on scale factor
-} else if (filename == "D") {
-  data$FPKM <- data$FPKM * 1.2474
-} else if (filename == "LZ") {
-  data$FPKM <- data$FPKM * 1
-}
-  
-data <- data[,c(4,1,6,5)]
-colnames(data) <- c("SNP", "CHR", "BP", "P") #P=FPKM, BP=midpoint position, CHR=chromosome, SNP=geneName
-data <- data %>%filter(CHR != "chrM")
-#data <- data[-113543,] #this row has very high FPKM so I'm excluding this outlier
-
-#Arrange the dataset by chromosome number
-data$Number <- as.numeric(gsub("[^0-9]+", "", data$CHR)) 
-data$Number[data$CHR=="chrX"] <- 20
-data$Number[data$CHR=="chrY"] <- 21
-#data %>%mutate(NUMBERS = ifelse(CHR == "chrX", 20, NUMBERS))
-data <- data[order(data$Number, data$BP), ] #order via chromosome Number and the position
-#data$P <- log2(data$P)
-return(data)
+  data$BP <- (data$end + data$start)/2 #I'll be taking midpoint of gene to graph out the positions in Manhattan plot 
+  if (filename == "P") {
+    data$FPKM <- data$FPKM * 2.7153 # Normalization: multiplying by radioactive run-on scale factor
+  } else if (filename == "D") {
+    data$FPKM <- data$FPKM * 1.2474
+  } else if (filename == "LZ") {
+    data$FPKM <- data$FPKM * 1
+  }
+  data <- data[,c(4,1,6,5)]
+  colnames(data) <- c("SNP", "CHR", "BP", "P") #P=FPKM, BP=midpoint position, CHR=chromosome, SNP=geneName
+  data <- data %>%filter(CHR != "chrM")
+  #data <- data[-113543,] #this row has very high FPKM so I'm excluding this outlier
+  #Arrange the dataset by chromosome number
+  data$Number <- as.numeric(gsub("[^0-9]+", "", data$CHR)) 
+  data$Number[data$CHR=="chrX"] <- 20
+  data$Number[data$CHR=="chrY"] <- 21
+  #data %>%mutate(NUMBERS = ifelse(CHR == "chrX", 20, NUMBERS))
+  data <- data[order(data$Number, data$BP), ] #order via chromosome Number and the position
+  #data$P <- log2(data$P)
+  return(data)
 }
 
 #Function to plot Manhattan with position in x-axis and FPKM in y-axis
@@ -113,7 +111,6 @@ myManhattan <- function(df, graph.title = "",
 }
 
  #Calling the above functions
-
 stage_list <- c("ChRO_D", "ChRO_P", "ChRO_LZ")
 for(stage in stage_list) {
   print(stage)
@@ -135,7 +132,7 @@ D <- Plot_PrepareData(D, "D")
 P <- Plot_PrepareData(P, "P")
 LZ <- Plot_PrepareData(LZ, "LZ")
 
-#this row has very high FPKM so I'm excluding this gene for convineience 
+# This row has a very high FPKM so I'm excluding this gene for convenience 
 D <- D[-113543,] #gene is ERF1, ENSMUST00000205406.1
 P <- P[-113543,]
 LZ <- LZ[-113543,]
