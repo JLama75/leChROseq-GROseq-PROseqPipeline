@@ -3,6 +3,7 @@
 #GRO-seq data from Adelman's lab (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4402150/) Williams et al. 2015
 #The mouse Embryonic Stem Cells (mESCs) are derived from the female embryo.
 # Declare the array #list alternative in bash
+#Ilumina MiSeq: 2-3 billion reads
 
 declare -a accessions=(
     "SRR1482440"
