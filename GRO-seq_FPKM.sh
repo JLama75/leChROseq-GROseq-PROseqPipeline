@@ -41,6 +41,13 @@ zcat SRR1482441_2.fastq.gz SRR1482442_2.fastq.gz SRR1482443_2.fastq.gz SRR148244
 
 echo "Merging completed!"
 
+#Run FastQC
+fastqc adelman_Rep1_R1.fastq
+fastqc adelman_Rep1_R2.fastq
+
+fastqc adelman_Rep2_R1.fastq
+fastqc adelman_Rep2_R2.fastq
+
 #Cutadapt...
 ###################################################
 export PATH=/programs/cutadapt-4.1/bin:$PATH
